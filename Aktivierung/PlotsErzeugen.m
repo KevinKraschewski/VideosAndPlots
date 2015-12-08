@@ -1,12 +1,13 @@
-%% Erzeugt den 3-D Plot ueber Frequenz/Aktivierung und resultierende max.Amplitude
+%% Erzeugt den 3-D Plot ueber Frequenz/Aktivierung und resultierende Differenz der maximalen Amplituden
 
 % Die Frequenzen fuer die simuliert wurden
 frequencies = 50:-5:15;
 % Die Aktivierungen fuer die simuliert wurden
 activations = 1:-.05:.05;
 
+[X,Y] = meshgrid(activations,frequencies);
+
 Amp = zeros(20,8);
-% Rueckwaerts wegen komischer Speicherung zuvor...
 for i = 4  : 11
     % Lade die Daten
     load(['C:\Users\Kevin Kraschewski\Documents\MATLAB\HiWi\SmallActivationChange' num2str(i) '_12mm.mat'])
@@ -21,13 +22,13 @@ for i = 4  : 11
 
         
         % Sollte der Muskel noch nicht aktiviert worden sein wg Simulation
-        % entferne diesen aus den Daten zusammen mit der
+        % "entferne" diesen Wert aus den Daten zusammen mit der
         % Frequenz/Aktivierung
         
-        if HelpAmpMaxima == 0
-            frequencies(i,j) = NaN;
-            activations(i,j) = NaN;
-            HelpAmpMaxima = NaN;
+        if isnan(HelpAmpMaxima)
+            X(i-3,j) = NaN;
+            Y(i-3,j) = NaN;
+            
         end
         % Maximum der Maxima -> vermutlich immer die Mitte
         Amp(j,i-3) = max(HelpAmpMaxima);
@@ -39,9 +40,8 @@ end
 % Keine Ahnung wo die anderen herkamen?!
 Amp = Amp(1:20,1:8);
 %% Grid und Surfplot
-[X,Y] = meshgrid(activations,frequencies);
 surf(X,Y,Amp')
-title('maximalen Amplituden Differenz in Abhaengigkeit von Frequenz und maximaler Aktivierung');
+title('Differenz der maximalen Amplituden in Abhaengigkeit von Frequenz und maximaler Aktivierung');
 ylabel('Frequenzen [Hz]');
 xlabel('maximale Aktivierung [%]');
 zlabel('maximale Amplitudendifferenz [mm]');
