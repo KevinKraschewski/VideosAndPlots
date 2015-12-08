@@ -7,7 +7,7 @@ activations = 1:-.05:.05;
 
 [X,Y] = meshgrid(activations,frequencies);
 
-Amp = zeros(20,8);
+TimeShifts = zeros(20,8);
 for i = 4  : 11
     % Lade die Daten
     load(['C:\Users\Kevin Kraschewski\Documents\MATLAB\HiWi\SmallActivationChange' num2str(i) '_12mm.mat'])
@@ -18,30 +18,30 @@ for i = 4  : 11
         y = SimResults_Y{j};
         c = Config{j};
               
-        [~,HelpAmpMaxima,~,~] = c.getOutputOfInterest(t,y);
+        [TimeShift,~,~,~] = c.getOutputOfInterest(t,y);
 
         
         % Sollte der Muskel noch nicht aktiviert worden sein wg Simulation
         % "entferne" diesen Wert aus den Daten zusammen mit der
         % Frequenz/Aktivierung
         
-        if isnan(HelpAmpMaxima)
+        if isnan(TimeShift)
             X(i-3,j) = NaN;
             Y(i-3,j) = NaN;
             
         end
         % Maximum der Maxima -> vermutlich immer die Mitte
-        Amp(j,i-3) = max(HelpAmpMaxima);
+        TimeShifts(j,i-3) = TimeShift;
     end
     
 end
 
 
 % Keine Ahnung wo die anderen herkamen?!
-Amp = Amp(1:20,1:8);
+TimeShifts = TimeShifts(1:20,1:8);
 %% Grid und Surfplot
-surf(X,Y,Amp')
-title('Differenz der maximalen Amplituden in Abhaengigkeit von Frequenz und maximaler Aktivierung');
+surf(X,Y,TimeShifts')
+title('Arithmetischer Mittelwert der Zeitdifferenz von Peaks in Abhaengigkeit von Frequenz und max Aktivierung');
 ylabel('Frequenzen [Hz]');
-xlabel('maximale Aktivierung [%]');
-zlabel('maximale Amplitudendifferenz [mm]');
+xlabel('Aktivierung [%]');
+zlabel('Arithmetischer Mittelwert der Zeitdifferenzen der Peaks [s]');
